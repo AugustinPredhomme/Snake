@@ -27,6 +27,25 @@ document.addEventListener("DOMContentLoaded", function () {
         snakeElement.style.gridRow = snakePosition.y;
     }
 
+    function spawnBonus() {
+        const bonusesElement = document.getElementById("bonuses");
+
+        bonusesElement.innerHTML = "";
+
+        const bonusPosition = {
+            x: Math.floor(Math.random() * 20) + 1,
+            y: Math.floor(Math.random() * 20) + 1
+        };
+
+        const bonusElement = document.createElement("div");
+        bonusElement.className = "bonus";
+        bonusElement.style.gridColumn = bonusPosition.x;
+        bonusElement.style.gridRow = bonusPosition.y;
+
+        bonusesElement.appendChild(bonusElement);
+        console.log("Spawn bonus called");
+    }
+
     document.addEventListener("keydown", function (event) {
         switch (event.key) {
             case "ArrowLeft":
@@ -43,4 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 break;
         }
     });
+
+    spawnBonus();
+    spawnBonus();
 });

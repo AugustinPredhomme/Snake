@@ -28,6 +28,9 @@ body {
 
 #bonuses {
     position: relative;
+    display: grid;
+    grid-template-columns: repeat(20, 20px);
+    grid-template-rows: repeat(20, 20px);
 }
 
 .bonus {
