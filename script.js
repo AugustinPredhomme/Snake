@@ -3,21 +3,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function moveLeft() {
         snakePosition.x -= 1;
+        checkCollision();
         updateSnakePosition();
     }
 
     function moveRight() {
         snakePosition.x += 1;
+        checkCollision();
         updateSnakePosition();
     }
 
     function moveUp() {
         snakePosition.y -= 1;
+        checkCollision();
         updateSnakePosition();
     }
 
     function moveDown() {
         snakePosition.y += 1;
+        checkCollision();
         updateSnakePosition();
     }
 
@@ -27,23 +31,20 @@ document.addEventListener("DOMContentLoaded", function () {
         snakeElement.style.gridRow = snakePosition.y;
     }
 
-    function spawnBonus() {
-        const bonusesElement = document.getElementById("bonuses");
+    function checkCollision() {
+        if (
+            snakePosition.x < 1 ||
+            snakePosition.x > 20 ||
+            snakePosition.y < 1 ||
+            snakePosition.y > 20
+        ) {
+            alert("Game Over! Press SPACE to restart.");
+            restartGame();
+        }
+    }
 
-        bonusesElement.innerHTML = "";
-
-        const bonusPosition = {
-            x: Math.floor(Math.random() * 20) + 1,
-            y: Math.floor(Math.random() * 20) + 1
-        };
-
-        const bonusElement = document.createElement("div");
-        bonusElement.className = "bonus";
-        bonusElement.style.gridColumn = bonusPosition.x;
-        bonusElement.style.gridRow = bonusPosition.y;
-
-        bonusesElement.appendChild(bonusElement);
-        console.log("Spawn bonus called");
+    function restartGame() {
+        location.reload();
     }
 
     document.addEventListener("keydown", function (event) {
@@ -59,6 +60,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 break;
             case "ArrowDown":
                 moveDown();
+                break;
+            case " ":
+                restartGame();
                 break;
         }
     });
