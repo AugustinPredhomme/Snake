@@ -26,4 +26,21 @@ document.addEventListener("DOMContentLoaded", function () {
         snakeElement.style.gridColumn = snakePosition.x;
         snakeElement.style.gridRow = snakePosition.y;
     }
+
+    document.addEventListener("keydown", function (event) {
+        switch (event.key) {
+            case "ArrowLeft":
+                moveLeft();
+                break;
+            case "ArrowRight":
+                moveRight();
+                break;
+            case "ArrowUp":
+                moveUp();
+                break;
+            case "ArrowDown":
+                moveDown();
+                break;
+        }
+    });
 });
