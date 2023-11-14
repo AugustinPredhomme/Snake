@@ -1,8 +1,8 @@
 let snakePosition = { x: 10, y: 10 };
-
 let direction = "up";
-
 let score = 0;
+let speedInterval = 500;
+let gameInterval;
 
 function move() {
     switch (direction) {
@@ -74,6 +74,11 @@ function checkCollisions() {
             updateScore();
 
             bonus.remove();
+
+            speedInterval -= 50;
+
+            clearInterval(gameInterval);
+            gameInterval = setInterval(move, speedInterval);
 
             spawnBonus();
 
@@ -188,4 +193,4 @@ spawnBonus();
 
 updateScore();
 
-setInterval(move, 500);
+gameInterval = setInterval(move, speedInterval);
