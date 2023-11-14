@@ -80,6 +80,24 @@ function checkCollisions() {
             growSnake();
         }
     });
+
+    const snake = document.getElementById("snake");
+    const bodyParts = snake.getElementsByClassName("body");
+    for (let i = 1; i < bodyParts.length; i++) {
+        const bodyPart = bodyParts[i];
+        const bodyPartPosition = {
+            x: parseInt(bodyPart.style.gridColumn) - 1,
+            y: parseInt(bodyPart.style.gridRow) - 1
+        };
+    
+        if (
+            snakePosition.x === bodyPartPosition.x &&
+            snakePosition.y === bodyPartPosition.y
+        ) {
+            alert("Game over! Press SPACE to restart.");
+            restartGame();
+        }
+    }
 }
 
 function spawnBonus() {
@@ -139,20 +157,29 @@ function restartGame() {
 document.addEventListener("keydown", function (event) {
     switch (event.key) {
         case "ArrowUp":
-            direction = "up";
+            newDirection = "up";
             break;
         case "ArrowDown":
-            direction = "down";
+            newDirection = "down";
             break;
         case "ArrowLeft":
-            direction = "left";
+            newDirection = "left";
             break;
         case "ArrowRight":
-            direction = "right";
+            newDirection = "right";
             break;
         case " ":
             restartGame();
             break;
+    }
+
+    if (
+        (newDirection === "up" && direction !== "down") ||
+        (newDirection === "down" && direction !== "up") ||
+        (newDirection === "left" && direction !== "right") ||
+        (newDirection === "right" && direction !== "left")
+    ) {
+        direction = newDirection;
     }
 });
 
