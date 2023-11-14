@@ -1,42 +1,26 @@
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
 #terrain {
     display: grid;
     grid-template-columns: repeat(20, 20px);
     grid-template-rows: repeat(20, 20px);
+    width: 400px;
+    height: 400px;
     background-color: lightgrey;
 }
 
-#snake {
-    grid-column: 10;
-    grid-row: 10;
-    display: grid;
-    grid-template-columns: repeat(3, 20px);
-    grid-template-rows: 20px;
-}
-
-.body {
-    width: 20px;
-    height: 20px;
-    background-color: green;
-}
-
-#bonuses {
-    position: relative;
+#snake, #bonuses {
     display: grid;
     grid-template-columns: repeat(20, 20px);
     grid-template-rows: repeat(20, 20px);
 }
 
+.body {
+    width: 100%;
+    height: 100%;
+    background-color: green;
+}
+
 .bonus {
-    width: 20px;
-    height: 20px;
+    width: 100%;
+    height: 100%;
     background-color: red;
-    position: absolute;
 }

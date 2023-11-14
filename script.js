@@ -1,127 +1,164 @@
-document.addEventListener("DOMContentLoaded", function () {
-    let snakePosition = { x: 10, y: 10 };
-    let score = 0;
+let snakePosition = { x: 10, y: 10 };
 
-    function moveLeft() {
-        snakePosition.x -= 1;
-        checkCollision();
-        checkBonusCollision();
-        updateSnakePosition();
+let direction = "up";
+
+let score = 0;
+
+function move() {
+    switch (direction) {
+        case "up":
+            snakePosition.y--;
+            break;
+        case "down":
+            snakePosition.y++;
+            break;
+        case "left":
+            snakePosition.x--;
+            break;
+        case "right":
+            snakePosition.x++;
+            break;
     }
 
-    function moveRight() {
-        snakePosition.x += 1;
-        checkCollision();
-        checkBonusCollision();
-        updateSnakePosition();
+    redrawSnake();
+
+    checkCollisions();
+}
+
+function redrawSnake() {
+    const snake = document.getElementById("snake");
+    const bodyParts = snake.getElementsByClassName("body");
+
+    for (let i = bodyParts.length - 1; i > 0; i--) {
+        const prevBodyPart = bodyParts[i - 1];
+        const currentBodyPart = bodyParts[i];
+
+        currentBodyPart.style.gridColumn = prevBodyPart.style.gridColumn;
+        currentBodyPart.style.gridRow = prevBodyPart.style.gridRow;
     }
 
-    function moveUp() {
-        snakePosition.y -= 1;
-        checkCollision();
-        checkBonusCollision();
-        updateSnakePosition();
+    const head = bodyParts[0];
+    head.style.gridColumn = snakePosition.x + 1;
+    head.style.gridRow = snakePosition.y + 1;
+}
+
+function updateScore() {
+    const scoreElement = document.getElementById("score");
+    scoreElement.textContent = "Score: " + score;
+}
+
+function checkCollisions() {
+    if (
+        snakePosition.x < 0 ||
+        snakePosition.x >= 20 ||
+        snakePosition.y < 0 ||
+        snakePosition.y >= 20
+    ) {
+        alert("Game over! Press SPACE to restart.");
+        restartGame();
     }
 
-    function moveDown() {
-        snakePosition.y += 1;
-        checkCollision();
-        checkBonusCollision();
-        updateSnakePosition();
-    }
-
-    function updateSnakePosition() {
-        const snakeElement = document.getElementById("snake");
-        snakeElement.style.gridColumn = snakePosition.x;
-        snakeElement.style.gridRow = snakePosition.y;
-    }
-
-    function checkCollision() {
-        if (
-            snakePosition.x < 1 ||
-            snakePosition.x > 20 ||
-            snakePosition.y < 1 ||
-            snakePosition.y > 20
-        ) {
-            alert("Game Over! Press SPACE to restart.");
-            restartGame();
-        }
-    }
-
-    function spawnBonus() {
-        const bonusesElement = document.getElementById("bonuses");
-    
-        bonusesElement.innerHTML = "";
-    
+    const bonuses = document.querySelectorAll(".bonus");
+    bonuses.forEach(bonus => {
         const bonusPosition = {
-            x: Math.floor(Math.random() * 20) + 1,
-            y: Math.floor(Math.random() * 20) + 1
+            x: parseInt(bonus.style.gridColumn),
+            y: parseInt(bonus.style.gridRow) - 1
         };
-    
-        const bonusElement = document.createElement("div");
-        bonusElement.className = "bonus";
-        bonusElement.style.gridColumn = bonusPosition.x;
-        bonusElement.style.gridRow = bonusPosition.y;
-    
-        bonusesElement.appendChild(bonusElement);
-    }
 
-    function checkBonusCollision() {
-        const snakeElement = document.getElementById("snake");
-        const bonuses = document.querySelectorAll(".bonus");
+        if (
+            bonusPosition.x === snakePosition.x &&
+            bonusPosition.y === snakePosition.y
+        ) {
+            score++;
 
-        bonuses.forEach((bonus) => {
-            if (bonus && isColliding(snakeElement, bonus)) {
-                score += 1;
-                updateScore();
-                bonus.remove();
-                spawnBonus();
-            }
-        });
-    }
+            updateScore();
 
-    function isColliding(elem1, elem2) {
-        const rect1 = elem1.getBoundingClientRect();
-        const rect2 = elem2.getBoundingClientRect();
-        return !(
-            rect1.right < rect2.left ||
-            rect1.left > rect2.right ||
-            rect1.bottom < rect2.top ||
-            rect1.top > rect2.bottom
-        );
-    }
+            bonus.remove();
 
-    function updateScore() {
-        const scoreElement = document.getElementById("score");
-        scoreElement.textContent = `Score: ${score}`;
-    }
+            spawnBonus();
 
-    function restartGame() {
-        location.reload();
-    }
-
-    document.addEventListener("keydown", function (event) {
-        switch (event.key) {
-            case "ArrowLeft":
-                moveLeft();
-                break;
-            case "ArrowRight":
-                moveRight();
-                break;
-            case "ArrowUp":
-                moveUp();
-                break;
-            case "ArrowDown":
-                moveDown();
-                break;
-            case " ":
-                restartGame();
-                break;
+            growSnake();
         }
     });
+}
 
-    spawnBonus();
-    spawnBonus();
+function spawnBonus() {
+    const bonuses = document.getElementById("bonuses");
 
-    updateScore();
+    const bonus = document.createElement("div");
+    bonus.classList.add("bonus");
+
+    let randomX, randomY;
+    do {
+        randomX = Math.floor(Math.random() * 20);
+        randomY = Math.floor(Math.random() * 20);
+    } while (
+        bonuses.querySelector(`.bonus[x="${randomX}"][y="${randomY}"]`) !== null ||
+        (randomX === snakePosition.x && randomY === snakePosition.y)
+    );
+
+    bonus.style.gridColumn = randomX;
+    bonus.style.gridRow = randomY;
+
+    bonuses.appendChild(bonus);
+}
+
+
+function growSnake() {
+    const snake = document.getElementById("snake");
+    const bodyPart = document.createElement("div");
+    bodyPart.classList.add("body");
+    snake.appendChild(bodyPart);
+}
+
+function restartGame() {
+    snakePosition = { x: 10, y: 10 };
+
+    const snake = document.getElementById("snake");
+    while (snake.firstChild) {
+        snake.firstChild.remove();
+    }
+
+    const bonuses = document.getElementById("bonuses");
+    while (bonuses.firstChild) {
+        bonuses.firstChild.remove();
+    }
+
+    direction = "up";
+    score = 0;
+
+    for (let i = 0; i < 3; i++) {
+        growSnake();
+    }
+
+    for (let i = 0; i < 2; i++) {
+        spawnBonus();
+    }
+}
+
+document.addEventListener("keydown", function (event) {
+    switch (event.key) {
+        case "ArrowUp":
+            direction = "up";
+            break;
+        case "ArrowDown":
+            direction = "down";
+            break;
+        case "ArrowLeft":
+            direction = "left";
+            break;
+        case "ArrowRight":
+            direction = "right";
+            break;
+        case " ":
+            restartGame();
+            break;
+    }
 });
+
+spawnBonus();
+spawnBonus();
+
+updateScore();
+
+setInterval(move, 500);
